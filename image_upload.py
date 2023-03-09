@@ -1,17 +1,15 @@
-import base64
-import requests
-import sys
+import express from 'express';
+import router from './routes/index';
 
-file_path = sys.argv[1]
-file_name = file_path.split('/')[-1]
+const port = parseInt(process.env.PORT, 10) || 5000;
 
-file_encoded = None
-with open(file_path, "rb") as image_file:
-    file_encoded = base64.b64encode(image_file.read()).decode('utf-8')
+const app = express();
 
-r_json = {'name': file_name, 'type': 'image', 'isPublic': True,
-          'data': file_encoded, 'parentId': sys.argv[3]}
-r_headers = {'X-Token': sys.argv[2]}
+app.use(express.json());
+app.use('/', router);
 
-r = requests.post("http://0.0.0.0:5000/files", json=r_json, headers=r_headers)
-print(r.json())
+app.listen(port, () => {
+  console.log(`server running on port ${port}`);
+});
+
+export default app;
